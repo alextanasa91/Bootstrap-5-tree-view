@@ -70,17 +70,29 @@
             var _this = this;
             this.build($(this.element), this.tree, 0);
             // Update angle icon on collapse
-            
             $(this.element).on('click', '.list-group-item', function (e) {
-              
-                
                
-                
-                
-                
+                    if (this.children[0] != _this.settings.blankIcon)
+                    {
+                        $('.state-icon', this)
+                            .toggleClass(_this.settings.expandIcon)
+                            .toggleClass(_this.settings.collapseIcon);
+                    }
+                // navigate to href if present
+                if (e.target.hasAttribute('href')) {
+                    if (_this.settings.openNodeLinkOnNewTab) {
+                        window.open(e.target.getAttribute('href'), '_blank');
+                    }
+                    else {
+                        window.location = e.target.getAttribute('href');
+                    }
+                }
+                else
+                {
+                    // Toggle the data-bs-target. Issue with Bootstrap toggle and dynamic code
+                    $($(this).attr("data-bs-target")).collapse('toggle');
+                }
             });
-
-
         },
         /**
          * Initialize treeview Data.
@@ -126,12 +138,7 @@
                 // Set Expand and Collapse icones.
                 if (node.nodes.length > 0) {
                     var treeItemStateIcon = $(templates.treeviewItemStateIcon)
-                    .addClass(node.expanded ? _this.settings.expandIcon : _this.settings.collapseIcon);
-                    treeItem.append(treeItemStateIcon);
-                }
-                else { 
-                    var treeItemStateIcon = $(templates.treeviewItemStateIcon)
-                        .addClass(_this.settings.blankIcon);
+                        .addClass((node.expanded)?_this.settings.expandIcon:_this.settings.collapseIcon);
                     treeItem.append(treeItemStateIcon);
                 }
                 // set node icon if exist.
@@ -143,7 +150,6 @@
                 // Set node Text.
                 treeItem.append(node.text);
                 treeItem.append('<div class="float-end"><input name="radio" id="radio" type="radio" value="'+node.id+'"></div>');
-                // Reset node href if present
                 if (node.href) {
                     treeItem.attr('href', node.href);
                 }
